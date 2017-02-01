@@ -1,0 +1,110 @@
+<span class="rowsCount hide">{{(countData==0 && cfg.data!=null)?cfg.data.length:countData}}</span>
+<div class="table-responsive">
+    <table class="table table-condensed table-bordered datatablesTbl">
+        <thead>
+            <tr class="heading">
+                <th *ngFor="let item of cfg.columns" [attr.class]="item.class" (click)="(cfg.data) ? setOrder($event, item.name) : return;" [attr.width]="item.width" style="cursor:pointer;">
+                    {{item.title}}
+                    <span *ngIf="item.name"><i class="fa fa-sort"></i></span>
+                </th>
+            </tr>
+            <tr class="filters">
+                <th *ngFor="let item of cfg.columns" [attr.class]="item.class">
+                    <span *ngIf="item.filter == 'text'">
+                        <input type="text" class="form-control" [attr.name]="item.name" value="" (keyup)="filterText($event, item.name, item.type)">
+                    </span>
+                    <span *ngIf="item.filter == 'select'">
+                        <select [attr.name]="item.name" id="" class="form-control" (change)="filterText($event, item.name)">
+                            <option value="">Todos</option>
+                            <option value="{{op.value}}" *ngFor="let op of item.options" [hidden]="op.hidden">{{op.text}}</option>
+                        </select>
+                    </span>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngIf="!cfg.data">
+                <td colspan="7" class="text-center">
+                    <i class="fa fa-spin fa-refresh fa-2x" style="color:#e1e1e1;"></i>
+                </td>
+            </tr>
+            <tr *ngIf="cfg.data && cfg.data == 0">
+                <td colspan="7" class="text-center">
+                    No hay información disponible.
+                </td>
+            </tr>
+            <tr #dataDt *ngFor="let item of cfg.data | filter : filters | orderBy : order.field : order.asc ">
+
+                <td *ngFor="let row of cfg.columns" [attr.class]="row.class" style="vertical-align:middle;">
+                    <span *ngIf="!row.options">
+                        <span *ngIf="row.type == 'date'">
+                            {{item[row.name]}}
+                        </span>
+                        <span *ngIf="row.type != 'date'">
+                            {{item[row.name]}}
+                        </span>
+                    </span>
+                    <span *ngIf="row.options">
+                        <div [attr.class]="item[row.name] | object:row.options:'class'" [attr.style]="item[row.name] | object:row.options:'style'">{{item[row.name] | object:row.options:'text'}}</div>
+
+
+                            <!--<div [attr.class]="row.options[item[row.name]]?.class" [attr.style]="row.options[item[row.name]]?.style">{{row.options[item[row.name]]?.text}}</div>    -->
+                        <!--<span *ngIf="item[row.name]==0">
+                        </span>
+                        <span *ngIf="item[row.name]!=0">
+                            <div [attr.class]="row.options[item[row.name]-1]?.class" [attr.style]="row.options[item[row.name]-1]?.style">{{row.options[item[row.name]-1]?.text}}</div>
+                        </span>-->
+                    </span>
+                    <span *ngIf="row.actions">
+                        <span *ngFor="let action of row.actions">
+                            <span *ngIf="action.url">
+                                <a  [attr.class]="action.class" [attr.name]="action.name" routerLink="[action.url, item[action.field]]">{{action.text}}</a>
+                            </span>
+                            <span *ngIf="!action.url">
+                                <a [attr.class]="action.class" [attr.name]="action.name" (click)="onClickAction($event, item[action.field], item, action.name)">
+                                    <i *ngIf="action.icon" class="{{action.icon}}"></i>
+                                    <span *ngIf="action.showText">{{action.text}}</span>
+                                </a>
+                            </span>
+                        </span>
+                        <!--<a *ngFor="let action of row.actions" [attr.class]="action.class" [routerLink]="[action.url, item[action.field]]">{{action.text}}</a>-->
+                    </span>
+                </td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <!--<th [attr.colspan]="countCols">
+                    <pagination-controls #p [id]="configPagination.id"
+                                    [maxSize]="maxSize"
+                                    [directionLinks]="directionLinks"
+                                    [autoHide]="autoHide"
+                                    (pageChange)="onPageChange($event)">
+
+
+                        <nav aria-label="...">
+                            <ul class="pagination pull-right">
+                                <li [class.disabled]="p.isFirstPage()" *ngIf="p.directionLinks"><a [class.disabled]="!p.isFirstPage()" (click)="(!p.isFirstPage()) ? p.previous() : return;" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+
+
+                                <li *ngFor="let page of p.pages" [class.active]="p.getCurrent() === page.value">
+                                    <a (click)="p.setCurrent(page.value)" style="cursor:pointer;">{{ page.label }}</a>
+                                </li>
+
+
+                                <li class="pagination-next" [class.disabled]="p.isLastPage()" *ngIf="p.directionLinks"><a [class.disabled]="!p.isLastPage()" (click)="(!p.isLastPage()) ? p.next() : return;" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>
+                            </ul>
+                        </nav>
+
+
+                    </pagination-controls>
+
+                </th>-->
+            </tr>
+        </tfoot>
+    </table>
+</div>
+<style>
+    .datatablesTbl{background:white;}
+    .datatablesTbl .heading{background:#383d43;color:white;}
+</style>
